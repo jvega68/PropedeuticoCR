@@ -1,0 +1,155 @@
+(defun source () (format t "
+These data are from Ezekiel, M. (1941). Methods of Correlation 
+Analysis, 2nd ed, New York: Wiley, p. 378-380.
+
+The data are haystack measurements taken in Nebraska in 1927 and 1928.  
+At that time, farmers sold hay unbailed and in the stack, 
+requiring estimation of the volume of a stack.  Two measurements 
+that could be made easily with a rope were usually employed: the 
+circumference around the base of the stack and the OVER, the distance 
+from the ground on one side of a stack to the ground on the other 
+side of the stack.  Stacks vary in height and shape so using a 
+simple computation like the volume of a hemisphere, while perhaps 
+a useful first approximation, might not be sufficiently accurate.  
+
+In the data 
+   Vol = True volume in cubic feet of a stack as obtained by 
+         using many different measurement of a haystack.
+   Circum = Stack circumference in feet
+   Over = Stack over measurement in feet. ~%"))
+
+(let* ((names '("Vol" "Circum" "Over"))
+       (data (transpose (split-list '(
+285300	690	3700
+270200	650	3650
+309900	730	3850
+130600	625	2650
+229400	700	3500
+272500	680	3650
+330900	710	3925
+279000	640	3675
+275600	620	3850
+523792	800	4300
+314982	670	3760
+549846	790	4460
+339783	660	3800
+300756	620	3680
+457429	790	4110
+622859	730	4800
+231864	630	3020
+317671	680	3775
+235231	700	3250
+217444	690	3162
+269472	730	3450
+333353	700	3725
+432892	785	4000
+211504	670	3125
+248908	665	3375
+229665	645	3238
+311721	655	3758
+408836	740	4033
+418088	720	4050
+231819	630	3300
+194690	580	3100
+247989	610	3650
+317480	730	3700
+215154	640	3300
+347568	730	3950
+439308	710	4200
+281950	690	3500
+370349	700	3850
+274281	725	3450
+300240	660	3550
+185419	690	3050
+198207	620	3100
+247086	650	3350
+120315	601	2625
+284384	710	3600
+263625	660	3600
+199839	650	3200
+200503	640	3200
+256876	660	3500
+216118	650	3250
+211220	670	3200
+300933	650	3800
+199224	630	3100
+274698	700	3400
+223827	640	3500
+174747	670	3000
+286391	670	3600
+359347	720	3900
+243548	620	3500
+243018	630	3400
+259007	670	3500
+357768	700	4100
+329924	730	4000
+198614	640	3250
+310904	680	3800
+282156	710	3700
+293224	670	3800
+330463	680	3800
+256546	720	3500
+450993	740	4133
+480401	810	4200
+424180	750	4075
+451610	692	4325
+501162	775	4310
+211073	650	3150
+277570	760	3460
+392790	720	3900
+421277	800	4150
+356264	785	3850
+285396	750	3550
+329438	690	3800
+168954	630	3050
+222884	620	3300
+236261	640	3400
+308828	680	3850
+382079	700	4000
+312664	630	3690
+362475	710	3845
+302397	730	3650
+604542	790	4700
+310011	640	3700
+337807	700	3800
+304029	770	3500
+225216	650	3250
+355261	760	3700
+263590	660	3450
+320141	710	3550
+259021	690	3500
+374355	760	3825
+385803	730	3950
+382944	740	3975
+255644	660	3300
+311907	690	3600
+212238	655	3200
+292192	690	3600
+293635	725	3450
+242766	760	3300
+206938	650	3150
+189954	720	3000
+428928	785	4050
+240739	675	3250
+309799	660	3550
+389367	755	3925
+223866	680	3175
+231479	640	3310
+266707	660	3470
+258207	680	3350
+342650	750	3700
+230734	600	3340
+396041	760	3930
+) 3))))
+
+(source)
+(rcode :data (/ data (list 100 10 100)) :data-names names :menu "Haystacks"))
+
+(def b (/ circum (* 2 pi)))
+(def ta (* .9 b))
+(def ha (sqrt (- (^ (- (/ over 2) ta) 2) (^ (- b ta) 2))))
+(def fa (* (/ 1 3) pi ha (+ (^ b 2) (* b ta) (* ta ta))))
+(send haystacks :add-data ha "height")
+(send haystacks :add-data fa "VolBCS")
+(send haystacks :add-data b "base-radius")
+(send haystacks :add-data (- (log  vol 2) (+ (log fa 2) .092)) "rBCS")
